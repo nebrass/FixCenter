@@ -1,94 +1,142 @@
 <!DOCTYPE html>
-<html>
-    <link rel="icon" type="image/png" href="favicon.ico">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
-    <!-- Latest AngularJS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!-- Declares the root element that allows behaviour to be modified through Angular custom HTML tags. -->
+<html ng-app="customers">
+    <head>
+        <title></title>
+        <link rel="icon" type="image/png" href="favicon.ico">
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+        <!-- Latest AngularJS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
-    <body ng-app="NetBeans" ng-controller="CustomerListCtrl">
-        <div class="container" >
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker.min.css">
 
-            <h1>Hello World from NetBeans snippet!</h1>
-            <div class="tableContainer">
-                <table id="customerList" ng-table="customerList" class="table table-striped">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    </head>
+    <body>
 
-                    <tr ng-repeat="customer in customers">
-                        <td title="'Name'">{{customer.name}}</td>
-                        <td title="'Family Name'">{{customer.familyName}}</td>
-                        <td><a ng-click="editCustomer(customer.id)" class="btn btn-small btn-primary">edit</a></td>
-                        <td><a ng-click="deleteCustomer(customer.id)" class="btn btn-small btn-danger">delete</a></td>
-                    </tr>
-                </table>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
-                    New Customer
-                </button>
-            </div>
-        </div>
+        <br>
+        <div class="container">
+            <div class="grid">
+                <!-- Specify a JavaScript controller script that binds Javascript variables to the HTML.-->
+                <div ng-controller="customersCtrl">
 
-        <div ng-controller="CustomerCreationCtrl">            
-            <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Create new customer</h4>
+                    <h1>{{helloText}}</h1>
+                    <br/>
+                    <table id="customersList" class="table table-striped" style="width: 50%;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Family</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="customer in customers">
+                                <td>{{customer.name}}</td>
+                                <td>{{customer.familyName}}</td>
+                                <td>{{customer.birthDate| date:'dd/MM/yyyy'}}</td>
+                                <td>{{customer.description}}</td>
+                                <td style="width: 10%;">
+                                    <button class="btn btn-danger" ng-click="remove(customer)">Remove</button>
+                                </td>
+                                <td style="width: 10%;">
+                                    <button class="btn btn-info" ng-click="setEdited(customer)">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn" data-toggle="modal" data-target="#createModal">
+                        New Customer
+                    </button>
+
+                    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">Create new customer</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="inputFirstName" class="control-label">First name:</label>
+                                            <input type="text" id="inputFirstName" class="form-control" ng-model="customer.name" placeholder="First name"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputLastName" class="control-label">Last name:</label>
+                                            <input type="text" id="inputLastName" class="form-control" ng-model="customer.familyName" placeholder="Last name"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputDescription" class="control-label">Description:</label>
+                                            <input type="text" id="inputDescription" class="form-control" ng-model="customer.description" placeholder="Description"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="dtp_input2" class="control-label">Date Picking</label>
+                                            <div class="input-group date form_date" data-date-viewmode="years">
+                                                <input class="form-control" size="16" type="text" ng-model="customer.birthDate" value="" readonly>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                            </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <a ng-click="create()" class="btn btn-small btn-primary">Create</a>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <form>
-                                <div class="form-group">
-                                    <label for="inputFirstName" class="control-label">First name:</label>
-                                    <input type="text" id="inputFirstName" class="form-control" ng-model="customer.name" placeholder="First name"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputLastName" class="control-label">Last name:</label>
-                                    <input type="text" id="inputLastName" class="form-control" ng-model="customer.familyName" placeholder="Last name"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputDescription" class="control-label">Description:</label>
-                                    <input type="text" id="inputDescription" class="form-control" ng-model="customer.description" placeholder="Description"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputDate" class="control-label">Date of birth: </label><br/>
-                                    <div style="display:inline-block; min-height:290px;">
-                                        <datepicker ng-model="customer.birthDate" min-date="minDate" show-weeks="false" class="well well-sm" custom-class="getDayClass(date, mode)"></datepicker>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Edit existing customer</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="inputFirstName" class="control-label">First name:</label>
+                                        <input type="text" id="inputFirstName" class="form-control" ng-model="customer.name" placeholder="First name"/>
                                     </div>
-                                </div>
-
-
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <a ng-click="createNewCustomer()" class="btn btn-small btn-primary">Create</a>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <div class="form-group">
+                                        <label for="inputLastName" class="control-label">Last name:</label>
+                                        <input type="text" id="inputLastName" class="form-control" ng-model="customer.familyName" placeholder="Last name"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputDescription" class="control-label">Description:</label>
+                                        <input type="text" id="inputDescription" class="form-control" ng-model="customer.description" placeholder="Description"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dtp_input2" class="control-label">Date Picking</label>
+                                        <div class="input-group date form_date" data-date-viewmode="years">
+                                            <input class="form-control" size="16" type="text" ng-model="customer.birthDate" value="" readonly>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <a ng-click="editv2()" class="btn btn-small btn-primary">Edit</a>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-resource.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-cookies.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-sanitize.js"></script>
-
-
-
-        <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>    
-
-        <link rel="stylesheet" href="plugins/ng-table/ng-table.min.css">
-
-        <script src="plugins/ng-table/ng-table.min.js"></script>
-
-        <script src = "scripts/app.js"></script>
-        <link rel="stylesheet" href="styles/style.css">
-        <script src="scripts/services/services.js"></script>
-        <script src="scripts/controllers/controllers.js"></script>
-    </body>
+    </div>
+    <script src="script/customer.js"></script>
+</body>
 </html>
